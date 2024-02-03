@@ -7,11 +7,8 @@ class JsonParserService
   end
 
   def parse
-    JSON.parse(data)
-        .map { listing_payload(_1) }
-        .each do |listing|
-          Listing.create(listing)
-        end
+    listings_payload = JSON.parse(data).map { listing_payload(_1) }
+    Listing.insert_all!(listings_payload)
   end
 
   private
