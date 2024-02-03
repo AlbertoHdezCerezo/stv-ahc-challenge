@@ -1,0 +1,26 @@
+version: '3.7'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    command: >
+      sh -c "echo 'Welcome to Simply.TV Recruitment Test :)' &&
+      tail -f /dev/null" # just to keep the container running
+    depends_on:
+      - database
+    volumes:
+      - .:/app
+
+  database:
+    platform: linux/x86_64
+    image: mysql:5.6.51
+    volumes:
+      - ./docker/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - db_data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+
+volumes:
+  db_data:
