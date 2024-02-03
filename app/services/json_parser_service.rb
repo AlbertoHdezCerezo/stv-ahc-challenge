@@ -7,6 +7,32 @@ class JsonParserService
   end
 
   def parse
-    # TODO: Please write parsing method to parse the contents of spec/fixtures/data.json into Listing records.
+    JSON.parse(data)
+        .map { listing_payload(_1) }
+        .each do |listing|
+          Listing.create(listing)
+        end
+  end
+
+  private
+
+  def listing_payload(json_data_item)
+    {
+      start_time: json_data_item.dig("schedule", "start"),
+      end_time: json_data_item.dig("schedule", "stop"),
+      title: title(json_data_item),
+      description: json_data_item["description"],
+      episode_number: episode_number(json_data_item),
+      season_number: json_data_item["season"],
+      image_url: json_data_item["image"]
+    }
+  end
+
+  def payload_title(json_data_item) = json_data_item["title"]
+
+  def title(json_data_item) = payload_title(json_data_item).sub(/\s\(\d+\)$/, '')
+
+  def episode_number(json_data_item)
+    payload_title(json_data_item)[/\((\d+)\)$/, 1] || nil
   end
 end
